@@ -1,0 +1,92 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity tb_TopLevel is
+end tb_TopLevel;
+
+architecture testbench of tb_TopLevel is
+    signal clk, reset, add, sub, equal : std_logic := '0';
+    signal valor : std_logic_vector(7 downto 0) := "00000000";
+    signal seg1_output, seg2_output, seg3_output, seg4_output, seg5_output, seg6_output : std_logic_vector(6 downto 0);
+
+    constant clock_period : time := 10 ns; -- Ajuste conforme necessário
+
+    signal stop_simulation : boolean := false;
+
+begin
+
+    -- Instância do componente
+    uut : entity work.TopLevel
+        port map (
+            clk => clk,
+            reset => reset,
+            add => add,
+            sub => sub,
+            equal => equal,
+            valor => valor,
+            seg1_output => seg1_output,
+            seg2_output => seg2_output,
+            seg3_output => seg3_output,
+            seg4_output => seg4_output,
+            seg5_output => seg5_output,
+            seg6_output => seg6_output
+        );
+
+    -- Processo para gerar o clock
+    process
+    begin
+        clk <= '0';
+        wait for clock_period / 2;
+        clk <= '1';
+        wait for clock_period / 2;
+    end process;
+
+    -- Processo para aplicar estímulos
+    process
+    begin
+        reset <= '1';
+        wait for clock_period * 2;
+        reset <= '0';
+
+        -- Adicionar estímulos conforme necessário
+
+        -- Exemplo: Adicionar 100 à caixa registradora
+        add <= '1';
+        wait for clock_period;
+        add <= '0';
+
+        -- Exemplo: Adicionar 50 à caixa registradora
+        add <= '1';
+        wait for clock_period;
+        add <= '0';
+
+        -- Exemplo: Subtrair 30 da caixa registradora
+        sub <= '1';
+        wait for clock_period;
+        sub <= '0';
+
+        -- Adicionar mais estímulos conforme necessário
+
+        -- Parar a simulação após um tempo
+        wait for clock_period * 100;
+        stop_simulation <= true;
+
+    end process;
+
+    -- Processo para verificar as saídas
+    process
+    begin
+        wait until stop_simulation = true;
+
+        -- Exemplo: Verificar as saídas após algum tempo
+        assert seg1_output = "1000000" report "Test failed: seg1_output" severity error;
+        assert seg2_output = "1111001" report "Test failed: seg2_output" severity error;
+        assert seg3_output = "0100100" report "Test failed: seg3_output" severity error;
+        -- Adicionar mais verificações conforme necessário
+
+        -- Exibir mensagem de sucesso se todos os testes passarem
+        report "Testbench finished successfully" severity note;
+        wait;
+    end process;
+
+end testbench;
